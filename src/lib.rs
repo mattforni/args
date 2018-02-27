@@ -373,6 +373,15 @@ impl Args {
         })
     }
 
+    /// Retreives an Option of the `short_name` for the `Opt` identified by `opt_name` and
+    ///
+    /// # Failures
+    ///
+    /// Returns `None` if no `Opt` corresponds to `opt_name`.
+    pub fn get_option_short_name(&self, opt_name :&str) -> Option<String> {
+        self.opts.get(opt_name).map(|opt| opt.flag())
+    }
+
     // Private instance methods
     fn register_opt(&mut self, opt: Box<Opt>) {
         if !self.opt_names.contains(&opt.name()) {
