@@ -32,8 +32,17 @@ pub trait Opt: Send {
     fn name(&self) -> String;
     fn parse(&self, matches: &Matches) -> Option<String>;
     fn register(&self, options: &mut Options);
+    fn box_clone(&self) -> Box<Opt>;
 }
 
+impl Clone for Box<Opt>
+{
+    fn clone(&self) -> Box<Opt> {
+        self.box_clone()
+    }
+}
+
+#[derive(Clone)]
 struct Multi {
     short_name: String,
     long_name: String,
@@ -83,8 +92,13 @@ impl Opt for Multi {
             &self.desc,
             &self.hint);
     }
+
+    fn box_clone(&self) -> Box<Opt> {
+        Box::new((*self).clone())
+    }
 }
 
+#[derive(Clone)]
 struct Single {
     short_name: String,
     long_name: String,
@@ -156,6 +170,10 @@ impl Opt for Single {
             &self.hint,
             self.has_arg,
             self.occur);
+    }
+
+    fn box_clone(&self) -> Box<Opt> {
+        Box::new((*self).clone())
     }
 }
 

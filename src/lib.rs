@@ -373,6 +373,15 @@ impl Args {
         })
     }
 
+    /// Retreives an `Option<Opt>` for the `Opt` identified by `opt_name`
+    ///
+    /// # Failures
+    ///
+    /// Returns `None` if no `Opt` corresponds to `opt_name`.
+    pub fn get_option(&self, opt_name :&str) -> Option<Box<Opt>> {
+        self.opts.get(opt_name).map(|opt| opt.clone())
+    }
+
     // Private instance methods
     fn register_opt(&mut self, opt: Box<Opt>) {
         if !self.opt_names.contains(&opt.name()) {
