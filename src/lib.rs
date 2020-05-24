@@ -37,13 +37,12 @@
 //!
 //! ```rust
 //! extern crate args;
-//! extern crate getopts;
 //!
-//! use getopts::Occur;
 //! use std::process::exit;
 //!
 //! use args::{Args,ArgsError};
 //! use args::validations::{Order,OrderValidation};
+//! use args::getopts::Occur;
 //!
 //! const PROGRAM_DESC: &'static str = "Run this program";
 //! const PROGRAM_NAME: &'static str = "program";
@@ -103,7 +102,7 @@
 #![cfg_attr(test, deny(warnings))]
 
 #[macro_use] extern crate log;
-extern crate getopts;
+pub extern crate getopts;
 
 use getopts::{Fail,HasArg,Occur,Options};
 use std::collections::BTreeMap;

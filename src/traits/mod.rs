@@ -7,12 +7,11 @@
 //!
 //! ```rust
 //! extern crate args;
-//! extern crate getopts;
 //!
 //! use args::{Args,ArgsError};
 //! use args::traits::{HasArgs,HasParsedArgs};
 //! use args::validations::{Order,OrderValidation};
-//! use getopts::Occur;
+//! use args::getopts::Occur;
 //! use std::process::exit;
 //!
 //! const PROGRAM_DESC: &'static str = "Run this program";
