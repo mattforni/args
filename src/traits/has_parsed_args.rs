@@ -16,10 +16,10 @@ pub trait HasParsedArgs: Send {
     }
 
     /// Acts as a convenience method for calling the `Args` implementation.
-    fn optional_validated_value_of<T>(&self, opt_name: &str, validations: &[Box<Validation<T=T>>])
+    fn optional_validated_value_of<T>(&self, opt_name: &str, validations: &[Box<dyn Validation<T=T>>])
                                       -> Result<Option<T>, ArgsError> where T: FromStr {
         if self.has_value(opt_name) {
-            Ok(Some(try!(self.validated_value_of::<T>(opt_name, validations))))
+            Ok(Some(self.validated_value_of::<T>(opt_name, validations)?))
         } else {
             Ok(None)
         }
@@ -28,14 +28,14 @@ pub trait HasParsedArgs: Send {
     /// Acts as a convenience method for calling the `Args` implementation.
     fn optional_value_of<T: FromStr>(&self, opt_name: &str) -> Result<Option<T>, ArgsError> {
         if self.has_value(opt_name) {
-            Ok(Some(try!(self.value_of::<T>(opt_name))))
+            Ok(Some(self.value_of::<T>(opt_name)?))
         } else {
             Ok(None)
         }
     }
 
     /// Acts as a convenience method for calling the `Args` implementation.
-    fn validated_value_of<T>(&self, opt_name: &str, validations: &[Box<Validation<T=T>>])
+    fn validated_value_of<T>(&self, opt_name: &str, validations: &[Box<dyn Validation<T=T>>])
         -> Result<T, ArgsError> where T: FromStr {
         self.parsed_args().validated_value_of::<T>(opt_name, validations)
     }

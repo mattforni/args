@@ -15,7 +15,7 @@ pub fn new(short_name: &str,
         hint: &str,
         has_arg: HasArg,
         occur: Occur,
-        default: Option<String>) -> Box<Opt> {
+        default: Option<String>) -> Box<dyn Opt> {
     if has_arg == HasArg::Maybe { unsupported!("HasArg::Maybe"); }
 
     if occur != Occur::Multi {
@@ -32,12 +32,12 @@ pub trait Opt: Send {
     fn name(&self) -> String;
     fn parse(&self, matches: &Matches) -> Option<String>;
     fn register(&self, options: &mut Options);
-    fn box_clone(&self) -> Box<Opt>;
+    fn box_clone(&self) -> Box<dyn Opt>;
 }
 
-impl Clone for Box<Opt>
+impl Clone for Box<dyn Opt>
 {
-    fn clone(&self) -> Box<Opt> {
+    fn clone(&self) -> Box<dyn Opt> {
         self.box_clone()
     }
 }
@@ -93,7 +93,7 @@ impl Opt for Multi {
             &self.hint);
     }
 
-    fn box_clone(&self) -> Box<Opt> {
+    fn box_clone(&self) -> Box<dyn Opt> {
         Box::new((*self).clone())
     }
 }
@@ -172,18 +172,18 @@ impl Opt for Single {
             self.occur);
     }
 
-    fn box_clone(&self) -> Box<Opt> {
+    fn box_clone(&self) -> Box<dyn Opt> {
         Box::new((*self).clone())
     }
 }
 
-impl Display for Opt {
+impl Display for dyn Opt {
     fn fmt(&self, f: &mut Formatter) -> fmt::Result {
         write!(f, "option '-{} --{}'", self.flag(), self.name())
     }
 }
 
-impl Debug for Opt {
+impl Debug for dyn Opt {
     fn fmt(&self, f: &mut Formatter) -> Result<(), Error> {
         write!(f, "option '-{} --{}'", self.flag(), self.name())
     }

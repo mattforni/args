@@ -38,13 +38,12 @@ accepts an optional log file name and responds to the help flag.
 
 ```rust
 extern crate args;
-extern crate getopts;
 
-use getopts::Occur;
 use std::process::exit;
 
 use args::{Args,ArgsError};
 use args::validations::{Order,OrderValidation};
+use args::getopts::Occur;
 
 const PROGRAM_DESC: &'static str = "Run this program";
 const PROGRAM_NAME: &'static str = "program";
