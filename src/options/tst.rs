@@ -2,7 +2,7 @@ use getopts::{HasArg,Occur};
 
 use options::{self,Opt};
 
-fn create(has_arg: HasArg, occur: Occur, default: Option<String>) -> Box<Opt> {
+fn create(has_arg: HasArg, occur: Occur, default: Option<String>) -> Box<dyn Opt> {
     options::new("o",
         "option",
         "Option",

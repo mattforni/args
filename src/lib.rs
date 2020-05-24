@@ -74,9 +74,9 @@
 //!         Occur::Optional,
 //!         Some(String::from("output.log")));
 //!
-//!     try!(args.parse(input));
+//!     args.parse(input)?;
 //!
-//!     let help = try!(args.value_of("help"));
+//!     let help = args.value_of("help")?;
 //!     if help {
 //!         args.full_usage();
 //!         return Ok(());
@@ -85,7 +85,7 @@
 //!     let gt_0 = Box::new(OrderValidation::new(Order::GreaterThan, 0u32));
 //!     let lt_10 = Box::new(OrderValidation::new(Order::LessThanOrEqual, 10u32));
 //!
-//!     let iters = try!(args.validated_value_of("iter", &[gt_0, lt_10]));
+//!     let iters = args.validated_value_of("iter", &[gt_0, lt_10])?;
 //!     for iter in 0..iters {
 //!         println!("Working on iteration {}", iter);
 //!     }
@@ -134,7 +134,7 @@ const SEPARATOR: &'static str = ",";
 pub struct Args {
     description: String,
     options: Options,
-    opts: BTreeMap<String, Box<Opt>>,
+    opts: BTreeMap<String, Box<dyn Opt>>,
     opt_names: Vec<String>,
     program_name: String,
     values: BTreeMap<String, String>
@@ -294,10 +294,10 @@ impl Args {
     /// # Failures
     ///
     /// See `validated_value_of`
-    pub fn optional_validated_value_of<T>(&self, opt_name: &str, validations: &[Box<Validation<T=T>>])
+    pub fn optional_validated_value_of<T>(&self, opt_name: &str, validations: &[Box<dyn Validation<T=T>>])
                                           -> Result<Option<T>, ArgsError> where T: FromStr {
         if self.has_value(opt_name) {
-            Ok(Some(try!(self.validated_value_of::<T>(opt_name, validations))))
+            Ok(Some(self.validated_value_of::<T>(opt_name, validations)?))
         } else {
             Ok(None)
         }
@@ -311,7 +311,7 @@ impl Args {
     /// See `value_of`
     pub fn optional_value_of<T: FromStr>(&self, opt_name: &str) -> Result<Option<T>, ArgsError> {
         if self.has_value(opt_name) {
-            Ok(Some(try!(self.value_of::<T>(opt_name))))
+            Ok(Some(self.value_of::<T>(opt_name)?))
         } else {
             Ok(None)
         }
@@ -324,7 +324,7 @@ impl Args {
     ///
     /// Returns `Err(ArgsError)` if no `Opt` correspond to `opt_name`, if the value cannot
     /// be cast to type `T` or if any validation is considered invalid.
-    pub fn validated_value_of<T>(&self, opt_name: &str, validations: &[Box<Validation<T=T>>])
+    pub fn validated_value_of<T>(&self, opt_name: &str, validations: &[Box<dyn Validation<T=T>>])
         -> Result<T, ArgsError> where T: FromStr {
         // If the value does not have an error, run validations
         self.value_of::<T>(opt_name).and_then(|value| {
@@ -378,12 +378,12 @@ impl Args {
     /// # Failures
     ///
     /// Returns `None` if no `Opt` corresponds to `opt_name`.
-    pub fn get_option(&self, opt_name :&str) -> Option<Box<Opt>> {
+    pub fn get_option(&self, opt_name :&str) -> Option<Box<dyn Opt>> {
         self.opts.get(opt_name).map(|opt| opt.clone())
     }
 
     // Private instance methods
-    fn register_opt(&mut self, opt: Box<Opt>) {
+    fn register_opt(&mut self, opt: Box<dyn Opt>) {
         if !self.opt_names.contains(&opt.name()) {
             debug!("Registering {}", opt);
             opt.register(&mut self.options);
