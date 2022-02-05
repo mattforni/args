@@ -79,7 +79,7 @@ fn parse(input: &Vec<&str>) -> Result<(), ArgsError> {
 
     let help = try!(args.value_of("help"));
     if help {
-        args.full_usage();
+        println!("{}", args.full_usage());
         return Ok(());
     }
 
